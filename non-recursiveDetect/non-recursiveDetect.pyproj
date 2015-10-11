@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>868a50d6-e002-425c-a9fe-6904bd8c67af</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>findMaxTTL.py</StartupFile>
+    <StartupFile>maxTTLstats.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -25,6 +25,9 @@
     <Compile Include="findMaxTTL.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="maxTTLstats.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="non_recursiveDetect.py" />
     <Compile Include="test.py">
       <SubType>Code</SubType>
@@ -34,6 +37,7 @@
     <Content Include="malurl.txt" />
     <Content Include="malurlchina.txt" />
     <Content Include="maxTTL.txt" />
+    <Content Include="maxTTL0.txt" />
     <Content Include="maxTTLchina.txt" />
     <Content Include="remainTTL.txt" />
   </ItemGroup>
