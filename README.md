@@ -10,7 +10,7 @@ change the dns server whose variable name is name_server can be changed in all .
 run findMaxTTL.py to get maxTTL text file which record all registered domains
 
 ### third
-run non_recursiveDetect.py with cellular network shared via USB or WiFi
+run non_recursiveDetect.py with cellular network shared via USB or WiFi  
 remainTTL.txt is desired result  
 
 ### attention
