@@ -22,6 +22,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="findMaxTTL.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="non_recursiveDetect.py" />
   </ItemGroup>
   <PropertyGroup>

@@ -27,8 +27,14 @@ def query(domain, name_server):
     if not domain.is_absolute():
         domain = domain.concatenate(dns.name.root)
 
-    request = dns.message.make_query(domain, dns.rdatatype.A)
-    response = dns.query.udp(request, name_server, timeout=2)
+    
+    request = dns.message.make_query(qname = domain,
+                                     rdtype = dns.rdatatype.A)
+    request.flags &= ~dns.flags.RD
+
+    response = dns.query.udp(q=request,
+                             where=name_server,
+                             timeout=2)
 
 
     # print '****************'
@@ -51,42 +57,28 @@ f = open("maxTTL.txt", mode='w')
 q = Queue.Queue()
 
 
-def getTTL(domain, q):
+def getAnswer(domain, q):
     global wrongCnt
-    TTL = 0
+    
     try:
         response = query(domain, name_server)
-        additCnt = len(response.additional)
+        if len(response.answer) != 0:
+            q.put(domain,response)
+
     except dns.exception.Timeout:
-        additCnt = 0
         wrongCnt += 1
 
-    if additCnt != 0:
-        addit = response.additional[0]
-        Serveraddr = addit.items[0].address
-
-        try:
-            response = query(domain, Serveraddr)
-            ansCnt = len(response.additional)
-        except dns.exception.Timeout:
-            ansCnt = 0
-            wrongCnt += 1
-
-        ansCnt = len(response.answer)
-        if ansCnt != 0:
-            answer = response.answer[0]
-            TTL = answer.ttl
-
-    # print domain, TTL
-    # f.write(domain + ' ' + str(TTL) + '\n')
-    q.put(domain + ' ' + str(TTL))
 
 
 numofthreads = 0
 threadspool = []
 
+
 for domain in domains:
-    t = threading.Thread(target=getTTL, args=(domain, q))
+    t = threading.Thread(target=getAnswer,
+                         args=(domain,
+                               q)
+                         )
     t.daemon = True
     threadspool.append(t)
     t.start()
@@ -99,7 +91,14 @@ for domain in domains:
             threadspool.pop().join()
 
         while not q.empty():
-            line = q.get()
+            localT=time.localtime()
+            
+            line = q.get() 
+            +' '+str(localT.tm_yday)
+            +'/'+str(localT.tm_hour)
+            +'/'+str(localT.tm_min)
+
+
             print(line)
 
             f.write(line + '\n')
