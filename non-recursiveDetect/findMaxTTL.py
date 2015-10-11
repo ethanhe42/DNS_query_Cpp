@@ -21,6 +21,7 @@ import time
 
 additZero=0
 wrongCnt = 0
+registered=0
 
 def query(domain, name_server):
     domain = dns.name.from_text(domain)
@@ -42,10 +43,10 @@ for line in f.readlines():
 f = open("maxTTL.txt", mode='w')
 
 q = Queue.Queue()
-registered=0
+
 
 def getTTL(domain, q):
-    global wrongCnt,additZero
+    global wrongCnt,additZero,registered
     TTL = 0
     try:
         response = query(domain, name_server)
@@ -95,19 +96,18 @@ for domain in domains:
     if numofthreads > maxthreads:
         numofthreads = 0
 
-        while len(threadspool) != 0:
-            
-            threadspool.pop().join()
+
 
         while not q.empty():
             line = q.get()
-            print(line)
+            #print(line)
 
-            #f.write(line + '\n')
-
-            # f.write(domain + ' ' + str(TTL) + '\n')
+            f.write(line + '\n')
         #print additZero
         print str(registered)+'/'+str(finish)+'/'+str(len(domains))
+
+while len(threadspool) != 0:            
+    threadspool.pop().join()
 
 time.sleep(3)
 f.close()
