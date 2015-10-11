@@ -1,9 +1,7 @@
 __author__ = 'rex686568'
 
-name_server_list = [
-    '114.114.114.114',
-    '202.117.0.20'
-]
+name_server_list = ['114.114.114.114',
+    '202.117.0.20']
 
 name_server = name_server_list[0]
 f = open("malurl.txt")
@@ -63,7 +61,8 @@ def getAnswer(domain, q):
     try:
         response = query(domain, name_server)
         if len(response.answer) != 0:
-            q.put(domain,response)
+            
+            q.put(domain + ' ' + response.answer[0].ttl)
 
     except dns.exception.Timeout:
         wrongCnt += 1
@@ -77,8 +76,7 @@ threadspool = []
 for domain in domains:
     t = threading.Thread(target=getAnswer,
                          args=(domain,
-                               q)
-                         )
+                               q))
     t.daemon = True
     threadspool.append(t)
     t.start()
@@ -91,12 +89,12 @@ for domain in domains:
             threadspool.pop().join()
 
         while not q.empty():
-            localT=time.localtime()
+            localT = time.localtime()
             
             line = q.get() 
-            +' '+str(localT.tm_yday)
-            +'/'+str(localT.tm_hour)
-            +'/'+str(localT.tm_min)
+            +' ' + str(localT.tm_yday)
+            +' ' + str(localT.tm_hour)
+            +':' + str(localT.tm_min)
 
 
             print(line)
@@ -104,6 +102,5 @@ for domain in domains:
             f.write(line + '\n')
 
             # f.write(domain + ' ' + str(TTL) + '\n')
-
 time.sleep(5)
 f.close()
