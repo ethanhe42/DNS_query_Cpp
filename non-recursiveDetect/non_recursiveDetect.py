@@ -4,7 +4,7 @@ name_server_list = ['202.117.0.20']
 
 name_server = name_server_list[0]
 
-maxthreads = 600
+maxthreads = 3000
 
 wrongCnt = 0
 
@@ -100,9 +100,9 @@ while True:
 
     numofthreads += 1
 
-    if numofthreads > maxthreads:
-        numofthreads = 0
-        time.sleep(Timeout+1)            
+    #if numofthreads > maxthreads:
+    #    numofthreads = 0
+    #    time.sleep(Timeout+1)            
 
             
 
@@ -110,7 +110,7 @@ while True:
     f = open("remainTTL.txt", mode='a')
     while not q.empty():
         line = q.get()
-        print(line)
+        #print(line)
         f.write(line + '\n')
     f.close()
 
