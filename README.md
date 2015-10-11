@@ -1,5 +1,7 @@
 # Web
 
+the python project is in non-recursiveDetect
+
 ### first
 u should input a list of domains,each domain per line in malurl.txt  
 change the dns server whose variable name is name_server can be changed in all .py  
