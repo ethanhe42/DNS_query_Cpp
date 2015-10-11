@@ -1,7 +1,7 @@
-﻿import Queue
-pq=Queue.PriorityQueue()
-pq.put((2,3))
-pq.put((1,5))
-pq.put((3,4))
-while not pq.empty():
-    print pq.get()[1]
+﻿from sets import Set
+s=Set(['1','2','3'])
+print s
+s.add('1')
+print s
+s.add('4')
+print s

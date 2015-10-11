@@ -1,4 +1,5 @@
-﻿name_server_list = [
+﻿
+name_server_list = [
     '114.114.114.114',
     '202.117.0.20'
 ]
@@ -7,13 +8,13 @@ name_server = name_server_list[1]
 f = open("malurl.txt")
 maxthreads = 300
 
-
+from sets import Set
 import dns.resolver
 import dns.name
 import dns.message
 import dns.query
 import dns.rdatatype
-from dns import *
+
 import Queue
 import threading
 import time
@@ -32,15 +33,16 @@ def query(domain, name_server):
     return response
 
 
-domains = Queue.Queue()
+domains = Set([])
+
 for line in f.readlines():
     
-    domains.append(str(line).split()[0])
+    domains.add(str(line).split()[0])
 
 f = open("maxTTL.txt", mode='w')
 
 q = Queue.Queue()
-
+registered=0
 
 def getTTL(domain, q):
     global wrongCnt,additZero
@@ -68,18 +70,22 @@ def getTTL(domain, q):
 
         ansCnt = len(response.answer)
         if ansCnt != 0:
+            registered+=1
             answer = response.answer[0]
             TTL = answer.ttl
 
     # print domain, TTL
     # f.write(domain + ' ' + str(TTL) + '\n')
-    q.put(domain + ' ' + str(TTL))
+    if TTL!=0:
+        q.put(domain + ' ' + str(TTL))
 
 
 numofthreads = 0
 threadspool = []
+finish=0
 
 for domain in domains:
+    finish+=1
     t = threading.Thread(target=getTTL, args=(domain, q))
     t.daemon = True
     threadspool.append(t)
@@ -90,15 +96,18 @@ for domain in domains:
         numofthreads = 0
 
         while len(threadspool) != 0:
+            
             threadspool.pop().join()
 
         while not q.empty():
             line = q.get()
             print(line)
 
-            f.write(line + '\n')
+            #f.write(line + '\n')
 
             # f.write(domain + ' ' + str(TTL) + '\n')
-        print additZero
-time.sleep(5)
+        #print additZero
+        print str(registered)+'/'+str(finish)+'/'+str(len(domains))
+
+time.sleep(3)
 f.close()
