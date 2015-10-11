@@ -47,7 +47,10 @@ def getAnswer(domain, q):
             q.put(domain + ' ' + 
                   str(response.answer[0].ttl)+' '+
                   str(currenttimeinseconds))
-
+        else:
+            q.put(domain + ' ' + 
+                  str(0)+' '+
+                  str(currenttimeinseconds))
     except dns.exception.Timeout:
         wrongCnt += 1
     numofthreads -= 1
