@@ -1,10 +1,9 @@
 __author__ = 'rex686568'
 
-name_server_list = ['114.114.114.114',
-'202.117.0.20']
+name_server_list = ['202.117.0.20']
 
-name_server = name_server_list[1]
-f = open("malurl.txt")
+name_server = name_server_list[0]
+
 maxthreads = 600
 
 wrongCnt = 0
@@ -33,24 +32,20 @@ def query(domain, name_server):
     response = dns.query.udp(q=request,
                              where=name_server,
                              timeout=2)
-
-
-    # print '****************'
-    # for i in response.answer:
-    #     print i
-    # for i in response.authority:
-    #     print i
-    # for i in response.additional:
-    #     print i
-
     return response
 
-
+f = open("maxTTL.txt")
 domains = []
-for line in f.readlines():
-    domains.append(str(line).split()[0])
+currenttimeinseconds=time.time()
 
-f = open("maxTTL.txt", mode='w')
+for line in f.readlines():
+    urlandmaxTTL=str(line).strip() .split()
+    url=urlandmaxTTL[0]
+    maxTTL=urlandmaxTTL[1]
+    domains.append([url,
+                    maxTTL+currenttimeinseconds])
+
+f = open("remainTTL.txt", mode='w')
 
 q = Queue.Queue()
 
@@ -72,10 +67,18 @@ def getAnswer(domain, q):
 numofthreads = 0
 threadspool = []
 
+    
 
-for domain in domains:
+
+
+
+while True:
+    stuff=domains.pop()
+    currenttimeinseconds=time.time()    
+    if stuff[1] <currenttimeinseconds:
+        pass
     t = threading.Thread(target=getAnswer,
-                         args=(domain,
+                         args=(domains.pop,
                                q))
     t.daemon = True
     threadspool.append(t)
@@ -95,7 +98,7 @@ for domain in domains:
             +' ' + str(localT.tm_yday)
             +' ' + str(localT.tm_hour)
             +':' + str(localT.tm_min)
-
+            
 
             print(line)
 

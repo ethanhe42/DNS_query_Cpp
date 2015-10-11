@@ -1,4 +1,4 @@
-name_server_list = [
+﻿name_server_list = [
     '114.114.114.114',
     '202.117.0.20'
 ]
@@ -32,8 +32,9 @@ def query(domain, name_server):
     return response
 
 
-domains = []
+domains = Queue.Queue()
 for line in f.readlines():
+    
     domains.append(str(line).split()[0])
 
 f = open("maxTTL.txt", mode='w')
