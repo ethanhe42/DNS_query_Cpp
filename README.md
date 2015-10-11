@@ -13,4 +13,5 @@ run findMaxTTL.py to get maxTTL text file which record all registered domains
 run non_recursiveDetect will be applied with cell phone network  
 remainTTL is result  
 
-
+### attention
+findMaxTTL.py will clear maxTTL.txt when it starts  
