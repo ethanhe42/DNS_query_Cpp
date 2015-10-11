@@ -1,9 +1,9 @@
 __author__ = 'rex686568'
 
 name_server_list = ['114.114.114.114',
-    '202.117.0.20']
+'202.117.0.20']
 
-name_server = name_server_list[0]
+name_server = name_server_list[1]
 f = open("malurl.txt")
 maxthreads = 600
 

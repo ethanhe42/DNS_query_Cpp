@@ -3,11 +3,10 @@ name_server_list = [
     '202.117.0.20'
 ]
 
-name_server = name_server_list[0]
+name_server = name_server_list[1]
 f = open("malurl.txt")
-maxthreads = 600
+maxthreads = 300
 
-wrongCnt = 0
 
 import dns.resolver
 import dns.name
@@ -19,6 +18,8 @@ import Queue
 import threading
 import time
 
+additZero=0
+wrongCnt = 0
 
 def query(domain, name_server):
     domain = dns.name.from_text(domain)
@@ -27,15 +28,6 @@ def query(domain, name_server):
 
     request = dns.message.make_query(domain, dns.rdatatype.A)
     response = dns.query.udp(request, name_server, timeout=2)
-
-
-    # print '****************'
-    # for i in response.answer:
-    #     print i
-    # for i in response.authority:
-    #     print i
-    # for i in response.additional:
-    #     print i
 
     return response
 
@@ -50,7 +42,7 @@ q = Queue.Queue()
 
 
 def getTTL(domain, q):
-    global wrongCnt
+    global wrongCnt,additZero
     TTL = 0
     try:
         response = query(domain, name_server)
@@ -59,7 +51,10 @@ def getTTL(domain, q):
         additCnt = 0
         wrongCnt += 1
 
-    if additCnt != 0:
+    if additCnt == 0:
+        additZero+=1
+
+    else:
         addit = response.additional[0]
         Serveraddr = addit.items[0].address
 
@@ -103,6 +98,6 @@ for domain in domains:
             f.write(line + '\n')
 
             # f.write(domain + ' ' + str(TTL) + '\n')
-
+        print additZero
 time.sleep(5)
 f.close()
