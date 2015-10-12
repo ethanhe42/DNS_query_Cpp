@@ -6,7 +6,9 @@ name_server = name_server_list[0]
 
 maxthreads = 3000
 
-wrongCnt = 0
+Timeout = 2
+
+minTTL = 10
 
 import dns.resolver
 import dns.name
@@ -18,7 +20,9 @@ import Queue
 import threading
 import time
 
-Timeout=2
+
+wrongCnt = 0
+numofthreads = 0
 
 def query(domain, name_server):
     domain = dns.name.from_text(domain)
@@ -35,7 +39,7 @@ def query(domain, name_server):
                              timeout=Timeout)
     return response
 
-numofthreads = 0
+
 
 def getAnswer(domain, q):
     global wrongCnt,numofthreads
@@ -44,13 +48,9 @@ def getAnswer(domain, q):
         response = query(domain, name_server)
         if len(response.answer) != 0:
             
-            q.put(domain + ' ' + 
-                  str(response.answer[0].ttl)+' '+
-                  str(currenttimeinseconds))
+            q.put(domain + ' ' + str(response.answer[0].ttl) + ' ' + str(currenttimeinseconds))
         else:
-            q.put(domain + ' ' + 
-                  str(0)+' '+
-                  str(currenttimeinseconds))
+            q.put(domain + ' ' + str(0) + ' ' + str(currenttimeinseconds))
     except dns.exception.Timeout:
         wrongCnt += 1
     numofthreads -= 1
@@ -64,8 +64,11 @@ for line in f.readlines():
     url = urlandmaxTTL[0]
     maxTTL = int(urlandmaxTTL[1])
     if maxTTL != 0:
-        domains.put((currenttimeinseconds,
-                     [url,maxTTL]))
+        if maxTTL < minTTL:  #waive too short ones
+            maxTTL = minTTL
+        domains.put((currenttimeinseconds + maxTTL,#+ maxTTL
+                     [url,
+                      maxTTL]))
     
 
 q = Queue.Queue()
@@ -85,9 +88,9 @@ while True:
         domains.put(stuff)
         time.sleep(deltaSeconds)
     else:
-        domain=stuff[1][0]
-        maxTTL=stuff[1][1]
-        refreshstuff=(maxTTL+currenttimeinseconds,
+        domain = stuff[1][0]
+        maxTTL = stuff[1][1]
+        refreshstuff = (maxTTL + currenttimeinseconds,
                       stuff[1])
         t = threading.Thread(target=getAnswer,
                              args=(domain,
@@ -102,7 +105,7 @@ while True:
 
     #if numofthreads > maxthreads:
     #    numofthreads = 0
-    #    time.sleep(Timeout+1)            
+    #    time.sleep(Timeout+1)
 
             
 
@@ -115,4 +118,4 @@ while True:
     f.close()
 
             # f.write(domain + ' ' + str(TTL) + '\n')
-time.sleep(Timeout+1)
+time.sleep(Timeout + 1)
