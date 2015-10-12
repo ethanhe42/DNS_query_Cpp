@@ -8,7 +8,7 @@ maxthreads = 3000
 
 Timeout = 2
 
-minTTL = 10
+minTTL = 600
 
 import dns.resolver
 import dns.name
@@ -66,7 +66,7 @@ for line in f.readlines():
     if maxTTL != 0:
         if maxTTL < minTTL:  #waive too short ones
             maxTTL = minTTL
-        domains.put((currenttimeinseconds + maxTTL,#+ maxTTL
+        domains.put((currenttimeinseconds,#+ maxTTL
                      [url,
                       maxTTL]))
     
