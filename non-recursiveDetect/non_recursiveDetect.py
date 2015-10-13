@@ -1,8 +1,8 @@
 ﻿__author__ = 'rex686568'
 
-name_server_list = ['202.117.0.20']
+name_server_list = ['202.117.0.20',
+                    '202.117.0.21']
 
-name_server = name_server_list[0]
 
 Timeout = 2
 
@@ -40,7 +40,7 @@ def query(domain, name_server):
 
 
 
-def getAnswer(domain, q):
+def getAnswer(domain, q, name_server):
     global wrongCnt,numofthreads,alllogs,currenttimeinseconds
     
     try:
@@ -80,9 +80,11 @@ for line in f.readlines():
     if maxTTL != 0:
         if maxTTL < minTTL:  #waive too short ones
             maxTTL = minTTL
-        domains.put((currenttimeinseconds,#+ maxTTL
-                     [url,
-                      maxTTL]))
+        for name_server in name_server_list:
+            domains.put((currenttimeinseconds,#+ maxTTL
+                         [url,
+                          maxTTL,
+                          name_server]))
     
 
 q = Queue.Queue()
@@ -104,11 +106,13 @@ while True:
     else:
         domain = stuff[1][0]
         maxTTL = stuff[1][1]
+        DNS=stuff[1][2]
         refreshstuff = (maxTTL + currenttimeinseconds,
                       stuff[1])
         t = threading.Thread(target=getAnswer,
                              args=(domain,
-                                   q))
+                                   q,
+                                   DNS))
         t.daemon = True
         t.start()
         domains.put(refreshstuff)
@@ -118,10 +122,9 @@ while True:
     numofthreads += 1
 
     if numofthreads > maxthreads:
-        #    numofthreads = 0
+            numofthreads = 0
         #    time.sleep(Timeout+1)
-        pass
-
+    
     f = open("remainTTL.csv", mode='a')
     while not q.empty():
         line = q.get()
