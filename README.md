@@ -1,18 +1,19 @@
 # Web
 
-the python project is in non-recursiveDetect
+the python project is in non-recursiveDetect  
+dnspython should be preinstalled  
 
 ### first
 u should input a list of domains,each domain per line in malurl.txt  
-change the dns server whose variable name is name_server can be changed in all .py  
 
 ### second
 run findMaxTTL.py to get maxTTL text file which record all registered domains
 
 ### third
 run non_recursiveDetect.py with cellular network shared via USB or WiFi  
+add DNS to name_server_list  
 u can set minTTL using variable minTTL  
-remainTTL.txt is desired result  
+remainTTL.csv is desired result  
 
 ### attention
 findMaxTTL.py will clear maxTTL.txt when it starts  
