@@ -47,7 +47,9 @@ def getAnswer(domain, q):
     try:
         response = query(domain, name_server)
         if len(response.answer) != 0:
-            
+            ttl=response.answer[0].ttl
+            if ttl==0:
+                ttl=1
             q.put(domain + ' ' + str(response.answer[0].ttl) + ' ' + str(currenttimeinseconds))
         else:
             q.put(domain + ' ' + str(0) + ' ' + str(currenttimeinseconds))
