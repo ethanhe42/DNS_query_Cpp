@@ -4,8 +4,6 @@ name_server_list = ['202.117.0.20']
 
 name_server = name_server_list[0]
 
-maxthreads = 3000
-
 Timeout = 2
 
 minTTL = 600
@@ -20,9 +18,10 @@ import Queue
 import threading
 import time
 
-
+maxthreads = 3000
 wrongCnt = 0
 numofthreads = 0
+alllogs = []
 
 def query(domain, name_server):
     domain = dns.name.from_text(domain)
@@ -42,20 +41,33 @@ def query(domain, name_server):
 
 
 def getAnswer(domain, q):
-    global wrongCnt,numofthreads
+    global wrongCnt,numofthreads,alllogs,currenttimeinseconds
     
     try:
         response = query(domain, name_server)
         if len(response.answer) != 0:
-            ttl=response.answer[0].ttl
-            if ttl==0:
-                ttl=1
+            ttl = response.answer[0].ttl
+            if ttl == 0:
+                ttl = 1
             q.put(domain + ' ' + str(response.answer[0].ttl) + ' ' + str(currenttimeinseconds))
         else:
             q.put(domain + ' ' + str(0) + ' ' + str(currenttimeinseconds))
+
+        # all logs
+
+        log = '  ' + '\n'
+        log+=domain + ' ' + str(currenttimeinseconds) + '\n'
+        for i in response.answer:
+            log+= str(i) + '\n'
+        for i in response.authority:
+            log+= str(i) + '\n'
+        for i in response.additional:
+            log+= str(i) + '\n'
+        alllogs.append(log)
+
     except dns.exception.Timeout:
         wrongCnt += 1
-    numofthreads -= 1
+
 
 f = open("maxTTL.txt")
 domains = Queue.PriorityQueue()
@@ -77,7 +89,7 @@ q = Queue.Queue()
 
 
 
-
+pastwrongCnt=0
 
 
 while True:
@@ -105,19 +117,26 @@ while True:
 
     numofthreads += 1
 
-    #if numofthreads > maxthreads:
-    #    numofthreads = 0
-    #    time.sleep(Timeout+1)
+    if numofthreads > maxthreads:
+        #    numofthreads = 0
+        #    time.sleep(Timeout+1)
+        pass
 
-            
-
-    
-    f = open("remainTTL.txt", mode='a')
+    f = open("remainTTL.csv", mode='a')
     while not q.empty():
         line = q.get()
         #print(line)
         f.write(line + '\n')
     f.close()
 
-            # f.write(domain + ' ' + str(TTL) + '\n')
+    f = open("log.txt", mode='a')
+    while len(alllogs) != 0:
+        f.write(alllogs.pop())    
+    f.close()
+
+    if pastwrongCnt!=wrongCnt:
+        print 'errorCnt',str(wrongCnt)
+        pastwrongCnt=wrongCnt
+
+
 time.sleep(Timeout + 1)
