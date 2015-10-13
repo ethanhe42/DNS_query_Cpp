@@ -12,7 +12,7 @@ run findMaxTTL.py to get maxTTL text file which record all registered domains
 ### third
 run non_recursiveDetect.py with cellular network shared via USB or WiFi  
 u can set minTTL using variable minTTL  
-remainTTL.txt is desired result  
+remainTTL.csv is desired result  
 
 ### attention
 findMaxTTL.py will clear maxTTL.txt when it starts  
