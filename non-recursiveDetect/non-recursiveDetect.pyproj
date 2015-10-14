@@ -22,6 +22,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="easyDNSavilable.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="findMaxTTL.py">
       <SubType>Code</SubType>
     </Compile>
@@ -37,12 +40,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="importName_server_list.txt">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="malurl.txt" />
     <Content Include="malurlchina.txt" />
     <Content Include="maxTTL.txt" />
     <Content Include="log.txt" />
     <Content Include="maxTTLchina.txt" />
     <Content Include="remainTTL.csv" />
+    <Content Include="selective.txt" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

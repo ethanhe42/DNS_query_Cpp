@@ -29,7 +29,7 @@ def query(domain, name_server):
         domain = domain.concatenate(dns.name.root)
 
     request = dns.message.make_query(domain, dns.rdatatype.A)
-    response = dns.query.udp(request, name_server, timeout=2)
+    response = dns.query.udp(request, name_server, timeout=1)
 
     return response
 

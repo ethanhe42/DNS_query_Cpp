@@ -1,13 +1,20 @@
 ﻿__author__ = 'rex686568'
 
-name_server_list = ['202.117.0.20',
-                    '202.117.0.21']
+# 1.input with hand
+#name_server_list = ['202.117.0.20',
+#                    '202.117.0.21']
+
+# 2.input from file 
+name_server_list=[]
+for line in open('importName_server_list.txt').readlines():
+    name_server_list.append(str(line).strip())
 
 
 Timeout = 2
 
 minTTL = 600
 
+import socket
 import dns.resolver
 import dns.name
 import dns.message
@@ -67,6 +74,12 @@ def getAnswer(domain, q, name_server):
 
     except dns.exception.Timeout:
         wrongCnt += 1
+    
+    except dns.exception.FormError:
+        print 'formerror'
+    
+    except socket.error:
+        print 'socket error,connection forced closed'
 
 
 f = open("maxTTL.txt")
