@@ -1,4 +1,4 @@
-# Web
+# DNS query
 
 the python project is in non-recursiveDetect  
 dnspython should be preinstalled  
